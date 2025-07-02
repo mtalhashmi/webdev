@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Web Development Course</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lora:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Embedded CSS from style.css */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Lora', serif;
+        }
+        .active-week {
+            background-color: #0d9488;
+            color: white;
+            font-weight: 600;
+        }
+        .active-tab {
+            border-color: #0d9488;
+            color: #0d9488;
+            background-color: #f0fdfa;
+            font-weight: 600;
+        }
+        .completed-day {
+            background-color: #e0f2f7 !important; /* Light cyan for completed */
+            border-left-color: #06b6d4 !important; /* Cyan border for completed */
+        }
+        .sidebar-hidden {
+            transform: translateX(-100%);
+        }
+        @media (min-width: 768px) {
+            .sidebar-hidden {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800">
+
+    <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Sidebar Toggle -->
+        <div class="md:hidden fixed top-4 left-4 z-50">
+            <button id="sidebar-toggle" class="p-2 bg-teal-600 text-white rounded-md shadow-lg focus:outline-none focus:ring-2 focus:ring-teal-500">
+                ☰
+            </button>
+        </div>
+
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-slate-800 text-white p-4 overflow-y-auto shadow-xl transition-transform duration-300 ease-in-out sidebar-hidden md:sidebar-visible fixed md:relative h-full z-40">
+            <h2 class="text-2xl font-bold text-teal-400 mb-2 mt-2 md:mt-0">Web Dev Course</h2>
+            <p class="text-sm text-slate-300 mb-6">15-Week Practical Plan</p>
+            <nav id="week-navigation">
+                <!-- Navigation links will be populated by JS -->
+                <a href="#profile-section" id="profile-nav-link" class="block p-3 rounded-lg hover:bg-slate-700 transition-colors mb-2 text-slate-100 font-medium">Profile & Progress</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto">
+            <div class="max-w-4xl mx-auto">
+                <header class="mb-8 pt-16 md:pt-0"> <!-- Added pt-16 for mobile to push content below toggle -->
+                    <h1 class="text-4xl md:text-5xl font-bold text-slate-900 leading-tight">Frontend Development for Beginners</h1>
+                    <p class="text-slate-600 mt-3 text-lg">A hands-on, project-based journey from the basics of HTML to building and deploying modern web applications.</p>
+                </header>
+
+                <!-- Interactive Hero Section -->
+                <section class="bg-gradient-to-br from-teal-500 to-cyan-600 text-white p-8 rounded-xl shadow-lg mb-10 text-center transform transition-all duration-500 hover:scale-[1.01]">
+                    <h2 id="hero-heading" class="text-3xl md:text-4xl font-bold mb-4">Your Journey Starts Here!</h2>
+                    <p id="hero-text" class="text-lg mb-6 max-w-2xl mx-auto">Click the button below to discover why learning web development is your next big step.</p>
+                    <button id="hero-button" class="bg-white text-teal-700 font-semibold py-3 px-8 rounded-full shadow-md hover:bg-slate-100 hover:scale-105 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-75">
+                        Discover Your Potential
+                    </button>
+                </section>
+
+                <!-- Modernized Progress Bar -->
+                <div class="mb-10 p-6 bg-white rounded-xl shadow-md border border-slate-100">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-xl font-semibold text-slate-800">Course Progress</h3>
+                        <span id="progress-text" class="text-xl font-bold text-teal-600">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-200 rounded-full h-5 shadow-inner overflow-hidden">
+                        <div id="progress-bar" class="bg-gradient-to-r from-teal-500 to-cyan-500 h-full rounded-full transition-all duration-500 ease-out shadow-md" style="width: 0%;"></div>
+                    </div>
+                </div>
+
+                <!-- Course Accordion -->
+                <div id="course-accordion" class="space-y-6">
+                    <!-- Accordion items will be populated by JS -->
+                </div>
+
+                <!-- Profile & Progress Section -->
+                <section id="profile-section" class="mt-12 p-6 bg-white rounded-xl shadow-lg border border-slate-100">
+                    <h2 class="text-3xl font-bold text-slate-900 mb-6">Profile & Progress</h2>
+
+                    <div id="login-section">
+                        <h3 class="text-xl font-semibold text-slate-800 mb-4">Sign In</h3>
+                        <div class="flex flex-col md:flex-row gap-4 items-end">
+                            <div class="flex-grow w-full">
+                                <label for="student-name-input" class="block text-slate-700 text-sm font-bold mb-2">Your Name:</label>
+                                <input type="text" id="student-name-input" placeholder="Enter your name" class="shadow appearance-none border rounded-md w-full py-2 px-3 text-slate-700 leading-tight focus:outline-none focus:shadow-outline focus:border-teal-500">
+                            </div>
+                            <button id="login-btn" class="bg-teal-600 text-white font-semibold py-2 px-6 rounded-full shadow-md hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 w-full md:w-auto">
+                                Sign In
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="profile-display-section" class="hidden">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-xl font-semibold text-slate-800">Welcome, <span id="current-username" class="text-teal-600"></span>!</h3>
+                            <button id="logout-btn" class="bg-slate-200 text-slate-700 font-semibold py-1.5 px-4 rounded-full shadow-sm hover:bg-slate-300 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400">
+                                Logout
+                            </button>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
+                            <h4 class="font-bold text-slate-700 mb-2">Your Course Progress</h4>
+                            <p class="text-slate-600">You have completed <span id="user-completed-days" class="font-bold text-teal-600">0</span> out of <span id="user-total-days" class="font-bold text-slate-800">0</span> days.</p>
+                            <div class="w-full bg-slate-200 rounded-full h-3 mt-2">
+                                <div id="user-progress-bar" class="bg-gradient-to-r from-teal-400 to-cyan-400 h-3 rounded-full transition-all duration-500" style="width: 0%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Embedded JavaScript from script.js
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const courseData = [
+                {
+                    week: 1, title: "Your First Webpage & HTML Essentials",
+                    days: [
+                        { day: 1, title: "Setting Up & The Very First Line of Code", content: "Introduction to the 'Why'. VS Code installation. Creating project folder and index.html. First HTML boilerplate: <!DOCTYPE html>, <html>, <head>, <body>, <title>, <h1>. Saving and opening in browser.", assignment: "Install VS Code. Create a new project folder and an index.html file with basic boilerplate and an h1 tag with your name. Open it in the browser.", cheatsheet: "Your First HTML Page: Basic boilerplate, <title>, <h1> with brief explanations." },
+                        { day: 2, title: "Structuring Your Content with HTML Tags", content: "Paragraphs (<p>), More Headings (h2, h3), Line Breaks (<br>), Horizontal Rules (<hr>), Text Formatting (<strong>, <em>).", assignment: "Add paragraphs, h2 sections, and use strong/em tags in your portfolio.", cheatsheet: "HTML Text & Structure Tags: p, h1-h6, br, hr, strong, em." },
+                        { day: 3, title: "Lists, Links, and Images", content: "Unordered Lists (<ul>, <li>), Ordered Lists (<ol>, <li>), Images (<img>, src, alt), Links (<a>, href). Linking to external sites and internal pages.", assignment: "Add an unordered list of hobbies, an ordered list of steps, an image, and links to your portfolio. Create and link to a contact.html page.", cheatsheet: "HTML Lists, Images & Links: ul, ol, li, img with src/alt, a with href." },
+                        { day: 4, title: "Semantic Structure for Your Portfolio", content: "Introduction to Semantic HTML5. Using <header>, <nav>, <main>, <section>, <footer> for better organization. Generic containers: <div> and <span>.", assignment: "Refactor your portfolio using semantic tags: header, nav, main, section, footer.", cheatsheet: "HTML Semantic Tags: Roles of header, nav, main, section, footer, div, span." },
+                        { day: 5, title: "Week 1 Project - Complete Your HTML Portfolio", content: "Project work session. Review of all HTML concepts. Guided troubleshooting using Browser Developer Tools ('Inspect Element'). Common issues: missing tags, wrong image paths.", assignment: "Complete the full HTML structure for your portfolio page, ensuring all required semantic elements are used. Check for errors using DevTools.", cheatsheet: "HTML Portfolio Checklist: Required elements, 'Inspect Element' tip." }
+                    ]
+                },
+                {
+                    week: 2, title: "Adding Style with CSS",
+                    days: [
+                        { day: 1, title: "Introducing CSS - Your Page's Makeover", content: "CSS Syntax: selector { property: value; }. Ways to add CSS (External, Internal, Inline). Selectors: Element, Class (.), ID (#). First CSS Properties: color, background-color, font-family, font-size.", assignment: "Create and link a style.css file. Style elements using element, class, and ID selectors. Change colors and fonts.", cheatsheet: "CSS Basics: Syntax & Selectors: CSS rule structure, linking CSS, element, class, ID selectors." },
+                        { day: 2, title: "The Box Model & Text Styling", content: "The CSS Box Model: content, padding, border, margin. Applying these properties. More Text Properties: font-weight, text-align, line-height. Centering content.", assignment: "Apply padding, border, and margin to sections. Center headings. Experiment with text styling properties.", cheatsheet: "The CSS Box Model: Diagram and properties. Centering techniques." },
+                        { day: 3, title: "Styling Links, Lists, Images & Display Property", content: "Advanced link styling with pseudo-classes (:hover, :active). Styling lists (list-style-type). Styling images (max-width: 100%, border-radius). The display property: block, inline, inline-block.", assignment: "Style your navigation with hover effects. Make images responsive and rounded. Arrange nav links horizontally.", cheatsheet: "CSS Styling: Links, Lists, Images, Display properties and examples." },
+                        { day: 4, title: "Backgrounds, Units & CSS Specificity", content: "Background properties: background-image, repeat, position, size. CSS Units: absolute (px) vs. relative (%, rem, vw). CSS Specificity rules (ID > Class > Element).", assignment: "Add a background image. Change font sizes to use relative units like rem and vw. Observe specificity by creating conflicting rules.", cheatsheet: "CSS Backgrounds, Units & Specificity: Background properties, unit explanations, specificity hierarchy." },
+                        { day: 5, title: "Week 2 Project - Styled Personal Portfolio", content: "Project work session. Give your portfolio a complete visual makeover. Live debugging session with Browser DevTools (Styles, Computed, Layout tabs).", assignment: "Complete the styling for your portfolio. Use DevTools to inspect and debug your CSS. Submit HTML and CSS files.", cheatsheet: "Styled Portfolio Checklist & DevTools CSS Tips." }
+                    ]
+                }
+            ];
+
+            // Fill in weeks 3-15 with placeholder data for the single file for brevity
+            for (let i = 3; i <= 15; i++) {
+                let title;
+                let projectFocus;
+
+                switch(i) {
+                    case 3: title = "Advanced CSS Layouts & Interactivity"; projectFocus = "Improve portfolio layout with Flexbox/Grid."; break;
+                    case 4: title = "Responsive Design & Polishing Websites"; projectFocus = "Make portfolio fully responsive."; break;
+                    case 5: title = "JavaScript Fundamentals"; projectFocus = "Add basic interactivity to portfolio."; break;
+                    case 6: title = "Advanced JavaScript"; projectFocus = "Build an interactive component (e.g., image gallery)."; break;
+                    case 7: title = "Essential Online Resources"; projectFocus = "Apply knowledge to solve a problem or find a new design idea."; break;
+                    case 8: title = "Building Functional Websites"; projectFocus = "Build a multi-page static site or a simple interactive app."; break;
+                    case 9: title = "Expanding Web App Capabilities"; projectFocus = "Build a Quiz App or a Converter App."; break;
+                    case 10: title = "Version Control with Git & GitHub"; projectFocus = "Commit all projects to a GitHub repository."; break;
+                    case 11: title = "AI Coding Agents - Your Smart Assistant"; projectFocus = "Use AI to improve or generate code for the portfolio."; break;
+                    case 12: title = "Hosting & Publishing Websites"; projectFocus = "Deploy the portfolio to GitHub Pages and Netlify/Vercel."; break;
+                    case 13: title = "Capstone Project - Planning & Design"; projectFocus = "Plan and design a final project from scratch."; break;
+                    case 14: title = "Capstone Project - Development & Iteration"; projectFocus = "Build the Minimum Viable Product (MVP) of the capstone."; break;
+                    case 15: title = "Capstone Project - Refinement & Deployment"; projectFocus = "Test, polish, and deploy the final capstone project."; break;
+                }
+
+                const weekData = {
+                    week: i, title: title,
+                    days: Array.from({length: 5}, (_, d) => ({
+                        day: d + 1,
+                        title: `${projectFocus}`,
+                        content: `Content for Week ${i}, Day ${d + 1}. Focus: ${projectFocus}`,
+                        assignment: `Complete practical tasks related to Week ${i}, Day ${d + 1}.`,
+                        cheatsheet: `Key takeaways and quick reference for Week ${i}, Day ${d + 1}.`
+                    }))
+                };
+                courseData.push(weekData);
+            }
+
+
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('sidebar');
+            const weekNavigation = document.getElementById('week-navigation');
+            const courseAccordion = document.getElementById('course-accordion');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-text');
+            const heroHeading = document.getElementById('hero-heading');
+            const heroText = document.getElementById('hero-text');
+            const heroButton = document.getElementById('hero-button');
+
+            // Profile & Progress elements
+            const loginSection = document.getElementById('login-section');
+            const profileDisplaySection = document.getElementById('profile-display-section');
+            const studentNameInput = document.getElementById('student-name-input');
+            const loginBtn = document.getElementById('login-btn');
+            const logoutBtn = document.getElementById('logout-btn');
+            const currentUsernameSpan = document.getElementById('current-username');
+            const userCompletedDaysSpan = document.getElementById('user-completed-days');
+            const userTotalDaysSpan = document.getElementById('user-total-days');
+            const userProgressBar = document.getElementById('user-progress-bar');
+
+            // Simplified state management for single file
+            let currentUser = localStorage.getItem('currentUser');
+            let userProgressData = JSON.parse(localStorage.getItem('userProgressData')) || {};
+            let completionState = {}; // This will be loaded per user
+
+            const totalDays = courseData.reduce((acc, week) => acc + week.days.length, 0);
+
+            const heroMessages = [
+                { heading: "Your Journey Starts Here!", text: "Click the button below to discover why learning web development is your next big step." },
+                { heading: "Build Amazing Things!", text: "From simple websites to complex applications, you'll gain the skills to create anything." },
+                { heading: "Unlock New Opportunities!", text: "Web development opens doors to exciting career paths and creative freedom." },
+                { heading: "Become a Digital Creator!", text: "Transform your ideas into interactive experiences for the world to see." }
+            ];
+            let currentHeroMessageIndex = 0;
+
+            function updateProfileUI() {
+                if (currentUser) {
+                    loginSection.classList.add('hidden');
+                    profileDisplaySection.classList.remove('hidden');
+                    currentUsernameSpan.textContent = currentUser;
+                    
+                    // Load user-specific completion state
+                    completionState = userProgressData[currentUser] || {};
+                    updateProgress(); // Update main progress bar
+                    updateUserProgressDisplay(); // Update profile progress display
+                    updateWeekDayCompletionVisuals(); // Update visual state of days
+                    
+                } else {
+                    loginSection.classList.remove('hidden');
+                    profileDisplaySection.classList.add('hidden');
+                    studentNameInput.value = ''; // Clear input on logout
+                    // Reset to a default or empty completion state if no user
+                    completionState = {}; // Clear completion state
+                    updateProgress(); // Update main progress bar
+                    updateWeekDayCompletionVisuals(); // Clear visual state of days
+                }
+            }
+
+            function updateProgress() {
+                const completedDays = Object.values(completionState).filter(Boolean).length;
+                const percentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `${Math.round(percentage)}%`;
+            }
+
+            function updateUserProgressDisplay() {
+                const completedDays = Object.values(completionState).filter(Boolean).length;
+                const percentage = totalDays > 0 ? (completedDays / totalDays) * 100 : 0;
+                userCompletedDaysSpan.textContent = completedDays;
+                userTotalDaysSpan.textContent = totalDays;
+                userProgressBar.style.width = `${percentage}%`;
+            }
+
+            function updateWeekDayCompletionVisuals() {
+                document.querySelectorAll('[id^="content-w"]').forEach(panel => {
+                    const dayId = panel.id.replace('content-', '');
+                    const completeBtn = panel.querySelector('.complete-btn');
+                    if (completionState[dayId]) {
+                        panel.classList.add('completed-day');
+                        if (completeBtn) {
+                            completeBtn.innerHTML = '✔ Completed';
+                            completeBtn.classList.add('bg-emerald-600', 'text-white', 'shadow-md');
+                            completeBtn.classList.remove('bg-white', 'text-emerald-700', 'border', 'hover:bg-emerald-50', 'hover:text-white', 'shadow-sm');
+                        }
+                    } else {
+                        panel.classList.remove('completed-day');
+                        if (completeBtn) {
+                            completeBtn.innerHTML = 'Mark Complete';
+                            completeBtn.classList.remove('bg-emerald-600', 'text-white', 'shadow-md');
+                            completeBtn.classList.add('bg-white', 'text-emerald-700', 'border', 'hover:bg-emerald-50', 'hover:text-white', 'shadow-sm');
+                        }
+                    }
+                });
+            }
+
+            heroButton.addEventListener('click', () => {
+                currentHeroMessageIndex = (currentHeroMessageIndex + 1) % heroMessages.length;
+                heroHeading.textContent = heroMessages[currentHeroMessageIndex].heading;
+                heroText.textContent = heroMessages[currentHeroMessageIndex].text;
+            });
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('sidebar-hidden');
+            });
+
+            loginBtn.addEventListener('click', () => {
+                const name = studentNameInput.value.trim();
+                if (name) {
+                    currentUser = name;
+                    localStorage.setItem('currentUser', currentUser);
+                    updateProfileUI();
+                } else {
+                    alert('Please enter your name to sign in.');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                // Save current user's progress before logging out
+                if (currentUser) {
+                    userProgressData[currentUser] = completionState;
+                    localStorage.setItem('userProgressData', JSON.stringify(userProgressData));
+                }
+                currentUser = null;
+                localStorage.removeItem('currentUser');
+                updateProfileUI();
+            });
+
+            // Initialize course content and event listeners
+            courseData.forEach((week) => {
+                const navLink = document.createElement('a');
+                navLink.href = `#week-${week.week}`;
+                navLink.textContent = `Week ${week.week}: ${week.title}`;
+                navLink.className = 'block p-3 rounded-lg hover:bg-slate-700 transition-colors mb-2 text-slate-100 font-medium';
+                navLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetAccordion = document.getElementById(`week-${week.week}`);
+                    if (targetAccordion) {
+                        targetAccordion.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        const content = targetAccordion.querySelector('.accordion-content');
+                        if (content.classList.contains('hidden')) {
+                            targetAccordion.querySelector('button').click();
+                        }
+                    }
+                    if (window.innerWidth < 768) {
+                        sidebar.classList.add('sidebar-hidden');
+                    }
+                });
+                weekNavigation.insertBefore(navLink, document.getElementById('profile-nav-link')); // Insert before profile link
+
+                const accordionItem = document.createElement('div');
+                accordionItem.id = `week-${week.week}`;
+                accordionItem.className = 'border border-slate-200 rounded-xl bg-white shadow-lg transition-all duration-300 overflow-hidden';
+
+                const accordionHeader = document.createElement('button');
+                accordionHeader.className = 'w-full text-left p-5 flex justify-between items-center hover:bg-slate-50 rounded-t-xl focus:outline-none';
+                accordionHeader.innerHTML = `
+                    <div>
+                        <span class="text-sm font-semibold text-teal-600 uppercase tracking-wide">WEEK ${week.week}</span>
+                        <h3 class="text-xl font-bold text-slate-900 mt-1">${week.title}</h3>
+                    </div>
+                    <svg class="w-7 h-7 text-slate-500 transform transition-transform shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                `;
+
+                const accordionContent = document.createElement('div');
+                accordionContent.className = 'accordion-content p-5 border-t border-slate-200 hidden';
+
+                const tabsContainer = document.createElement('div');
+                tabsContainer.className = 'flex border-b border-slate-200 mb-6 flex-wrap gap-2';
+
+                const contentContainer = document.createElement('div');
+
+                week.days.forEach((day, dayIndex) => {
+                    const dayId = `w${week.week}d${day.day}`;
+
+                    const tabButton = document.createElement('button');
+                    tabButton.textContent = `Day ${day.day}`;
+                    tabButton.className = 'px-5 py-2 -mb-px border-b-2 border-transparent text-slate-600 hover:text-teal-600 hover:border-teal-600 transition-colors rounded-t-lg';
+                    if (dayIndex === 0) {
+                        tabButton.classList.add('active-tab');
+                    }
+                    tabsContainer.appendChild(tabButton);
+
+                    const tabContent = document.createElement('div');
+                    tabContent.id = `content-${dayId}`;
+                    if (dayIndex !== 0) {
+                        tabContent.classList.add('hidden');
+                    }
+                    tabContent.className += ' space-y-6 p-6 rounded-b-xl border-l-4 border-slate-200 bg-slate-50 shadow-inner';
+
+                    tabContent.innerHTML = `
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                            <h4 class="text-2xl font-bold text-slate-800 mb-3 md:mb-0">${day.title}</h4>
+                            <button data-day-id="${dayId}" class="complete-btn px-4 py-2 text-sm font-semibold rounded-full transition-colors">
+                                Mark Complete
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                                <h5 class="font-bold mb-3 text-slate-700 text-lg">Class Content</h5>
+                                <p class="text-slate-600 text-base leading-relaxed">${day.content}</p>
+                            </div>
+                            <div class="bg-white p-5 rounded-lg border border-slate-200 shadow-sm">
+                                <h5 class="font-bold mb-3 text-slate-700 text-lg">Daily Assignment</h5>
+                                <p class="text-slate-600 text-base leading-relaxed">${day.assignment}</p>
+                            </div>
+                        </div>
+                        <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 shadow-sm">
+                            <h5 class="font-bold mb-3 text-blue-800 text-lg">Cheat Sheet</h5>
+                            <p class="text-blue-700 text-base font-mono leading-relaxed">${day.cheatsheet}</p>
+                        </div>
+                    `;
+                    contentContainer.appendChild(tabContent);
+
+                    tabButton.addEventListener('click', () => {
+                        tabsContainer.querySelectorAll('button').forEach(btn => btn.classList.remove('active-tab'));
+                        contentContainer.querySelectorAll('div[id^="content-"]').forEach(content => content.classList.add('hidden'));
+
+                        tabButton.classList.add('active-tab');
+                        tabContent.classList.remove('hidden');
+                    });
+                });
+
+                // Project Submission Section - Google Forms Link
+                const projectSubmissionSection = document.createElement('div');
+                projectSubmissionSection.className = 'mt-6 p-6 bg-white rounded-xl border border-slate-200 shadow-sm text-center';
+                projectSubmissionSection.innerHTML = `
+                    <h4 class="text-xl font-bold text-slate-900 mb-4">Submit Weekly Project for Week ${week.week}</h4>
+                    <p class="text-slate-600 mb-4">To submit your project files, please use the dedicated Google Form below. This ensures your files are securely delivered to your instructor's Google Drive.</p>
+                    <a href="https://forms.gle/aumP8AwS91LKaWuf7" target="_blank" class="inline-block bg-teal-600 text-white font-semibold py-3 px-8 rounded-full shadow-md hover:bg-teal-700 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        Open Google Form for Submission
+                    </a>
+                    <p class="text-slate-500 text-xs mt-4">
+                        <strong>Important:</strong> Replace "https://forms.gle/aumP8AwS91LKaWuf7" with the actual shareable link to your Google Form for file collection.
+                    </p>
+                `;
+                accordionContent.appendChild(tabsContainer);
+                accordionContent.appendChild(contentContainer);
+                accordionContent.appendChild(projectSubmissionSection);
+                accordionItem.appendChild(accordionHeader);
+                accordionItem.appendChild(accordionContent);
+                courseAccordion.appendChild(accordionItem);
+
+                accordionHeader.addEventListener('click', () => {
+                    accordionContent.classList.toggle('hidden');
+                    accordionHeader.querySelector('svg').classList.toggle('rotate-180');
+                });
+            });
+
+            // Event delegation for complete buttons
+            courseAccordion.addEventListener('click', (e) => {
+                if (e.target.classList.contains('complete-btn')) {
+                    if (!currentUser) {
+                        alert('Please sign in to track your progress.');
+                        return;
+                    }
+                    const dayId = e.target.dataset.dayId;
+                    completionState[dayId] = !completionState[dayId];
+                    userProgressData[currentUser] = completionState; // Save current user's state
+                    localStorage.setItem('userProgressData', JSON.stringify(userProgressData));
+
+                    updateProgress();
+                    updateUserProgressDisplay();
+                    updateWeekDayCompletionVisuals(); // Re-apply styles after state change
+                }
+            });
+
+            // Initial load logic
+            updateProfileUI(); // Set up profile/login display
+            // Open first week by default, but only if it exists
+            const firstAccordionContent = document.querySelector('.accordion-content');
+            if (firstAccordionContent) {
+                firstAccordionContent.classList.remove('hidden');
+                const firstAccordionHeader = firstAccordionContent.previousElementSibling;
+                if (firstAccordionHeader) {
+                    firstAccordionHeader.querySelector('svg').classList.add('rotate-180');
+                }
+            }
+            updateWeekDayCompletionVisuals(); // Apply initial completion styles
+        });
+    </script>
+
+</body>
+</html>
